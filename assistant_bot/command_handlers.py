@@ -5,6 +5,7 @@ that handle the different commands that the assistant bot can receive.
 
 from assistant_bot.address_book.repositories.AddressBook import AddressBook
 from assistant_bot.address_book.models.Record import Record
+from assistant_bot.helpers.contacts import get_upcoming_birthdays
 
 from assistant_bot.decorators import input_error
 
@@ -187,3 +188,74 @@ def show_all(book: AddressBook):
     ValueError: If the contacts dictionary is empty.
     """
     return book
+
+@input_error
+def add_birthday(args, book: AddressBook):
+    """
+    Add a birthdate to a contact.
+
+    Args:
+    args (list): A list containing the name and birthdate of the contact.
+    book (AddressBook): An AddressBook class containing the contacts.
+
+    Returns:
+    str: A message indicating whether the birthdate was added successfully or not.
+
+    Raises:
+    ValueError: If the number of arguments is not equal to 2 or if the contact is not found.
+    """
+    if len(args) != 2:
+        raise ValueError("Add birthdate command requires a name and a birthdate.")
+    name, birthdate = args
+
+    record = book.find_record(name)
+    record.add_birthday(birthdate)
+
+    return "Birthdate added."
+
+@input_error
+def show_birthday(args, book: AddressBook):
+    """
+    Show the birthdate of a contact.
+    
+    Args:
+    args (list): A list containing the name of the contact.
+    book (AddressBook): An AddressBook class containing the contacts.
+
+    Returns:
+    str: A contact's birthdate
+
+    Raises:
+    ValueError: If the number of arguments is not equal to 2 or if the contact is not found.
+    """
+    if len(args) != 1:
+        raise ValueError("Show birthdate command requires a name only.")
+    name = args
+
+    record = book.find_record(name)
+    return record.get_birthday()
+
+@input_error
+def birthdays(book: AddressBook):
+    """
+    Show all contacts with a birthdate.
+
+    Args:
+    book (AddressBook): An AddressBook class containing the contacts.
+
+    Returns:
+    str: A formatted string containing all the contacts with a birthdate
+        or a message if no contacts are found.
+
+    Raises:
+    ValueError: If the contacts dictionary is empty.
+    """
+    
+    records = book.data.values()
+    bd_records = get_upcoming_birthdays(records)
+
+    if not bd_records:
+        return "No upcoming birthdays."
+
+    return "\n".join(f"{record.get_name()}: congrats on {record.get_congrats_date()} ({record.get_birthday()})"
+                     for record in bd_records)

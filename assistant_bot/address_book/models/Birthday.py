@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from .Field import Field
+from assistant_bot.address_book.models.Field import Field
 
 class Birthday(Field):
     """
@@ -31,14 +31,10 @@ class Birthday(Field):
 
         message = "Invalid date format. Use DD.MM.YYYY"
 
-        try:
-            # validate before assign
-            if not self.__validate(value):
-                raise ValueError(message)
-
-            self.value = datetime.strptime(value, "%d.%m.%Y")
-        except ValueError:
+        if not self.__validate(value):
             raise ValueError(message)
+
+        self.value = datetime.strptime(value, "%d.%m.%Y")
 
     def __str__(self):
         """
@@ -57,7 +53,7 @@ class Birthday(Field):
 
     def __validate(self, value):
         """
-        Validates the field value
+        Validates the field value format and that it's a valid date and not a future date
 
         Arguments:
         value -- the value to validate
@@ -68,4 +64,25 @@ class Birthday(Field):
         Raises:
         None
         """
+
+        if not self.__validate_format(value):
+            return False
+
+        try:
+            date = datetime.strptime(value, "%d.%m.%Y")
+            return date <= datetime.now()
+        except ValueError:
+            return False
+
+    def __validate_format(self, value):
+        """
+        Validates the field value format
+
+        Arguments:
+        value -- the value to validate
+
+        Returns:
+        bool -- True if the value is valid, False otherwise
+        """
+
         return re.match(r"^\d{2}\.\d{2}\.\d{4}$", value) is not None

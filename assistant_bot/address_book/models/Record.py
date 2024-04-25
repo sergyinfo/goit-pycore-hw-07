@@ -2,6 +2,7 @@
 A model to store contact information, like name and phone numbers
 """
 
+import datetime
 from assistant_bot.address_book.models.Name import Name
 from assistant_bot.address_book.models.Phone import Phone
 from assistant_bot.address_book.models.Birthday import Birthday
@@ -46,7 +47,7 @@ class Record:
         Raises:
         None
         """
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday}"
 
     def add_birthday(self, birthday):
         """
@@ -172,6 +173,21 @@ class Record:
         None
         """
         return self.name
+    
+    def get_birthday(self):
+        """
+        Returns the birthday of the record
+
+        Arguments:
+        None
+
+        Returns:
+        str -- the birthday of the record
+
+        Raises:
+        None
+        """
+        return self.birthday
 
     def get_record(self):
         """
@@ -187,3 +203,61 @@ class Record:
         None
         """
         return self.name, self.phones
+
+    def has_upcoming_birthday(self, date: datetime, days=7):
+        """
+        Checks if the birthday is upcoming in next days
+
+        Arguments:
+        date -- the current date
+        days -- the number of days to check
+
+        Returns:
+        bool -- True if the birthday is upcoming, False otherwise
+
+        Raises:
+        None
+        """
+        if self.birthday:
+            end_date = date + datetime.timedelta(days=days)
+
+            birthday = self.birthday.value
+
+            # Normalize the birthday year to this year
+            this_year_birthday = datetime.date(date.year, birthday.month, birthday.day)
+
+            # Adjust for edge cases where the birthday has already passed this year
+            if this_year_birthday < date:
+                this_year_birthday = this_year_birthday.replace(year=date.year + 1)
+
+            # Check if the birthday falls within the range
+            return date <= this_year_birthday <= end_date
+
+        return False
+
+    def get_congrats_date(self, date: datetime = None):
+        """
+        Get the date to congratulate the person on their birthday
+
+        Arguments:
+        date -- the current date
+
+        Returns:
+        str -- the date to congratulate the person
+
+        Raises:
+        None
+        """
+
+        if not self.birthday:
+            return None
+        
+        if not date:
+            date = datetime.date.today()
+
+        birthday = self.birthday.value
+        congrats_date = datetime.date(date.year, birthday.month, birthday.day)
+
+        while congrats_date.weekday() > 4:
+            congrats_date += datetime.timedelta(days=1)
+        return congrats_date.strftime('%d-%m-%Y')

@@ -16,7 +16,8 @@ The assistant bot can perform the following commands:
 - close or exit: Close the assistant bot.
 """
 from assistant_bot.command_handlers import add_contact, change_contact, remove_contact, \
-                                            add_phone, edit_phone, remove_phone, show_phone, show_all
+                                            add_birthday, show_birthday, birthdays, add_phone, \
+                                            edit_phone, remove_phone, show_phone, show_all
 from assistant_bot.address_book.repositories.AddressBook import AddressBook
 
 def parse_input(user_input):
@@ -53,6 +54,7 @@ def main():
                 # display a greeting and all possible commands
                 print("Hello! Here are the available commands:")
                 print("add <name> <phone>: Add a contact")
+                print("add-birthday <name> <birthday>: Add a birthday to a contact")
                 print("change <name> <new_name>: Change the name of a contact")
                 print("remove <name>: Remove a contact")
                 print("phone-add <name> <phone>: Add a phone number to a contact")
@@ -77,6 +79,12 @@ def main():
                 print(show_phone(args, book))
             case "all":
                 print(show_all(book))
+            case 'add-birthday':
+                print(add_birthday(args, book))
+            case 'show-birthday':
+                print(show_birthday(args, book))
+            case 'birthdays':
+                print(birthdays(book))
             case None:
                 print("Please enter a command.")
             case _:
