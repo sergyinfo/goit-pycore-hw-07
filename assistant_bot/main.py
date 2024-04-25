@@ -57,9 +57,9 @@ def main():
                 print("add-birthday <name> <birthday>: Add a birthday to a contact")
                 print("change <name> <new_name>: Change the name of a contact")
                 print("remove <name>: Remove a contact")
-                print("phone-add <name> <phone>: Add a phone number to a contact")
-                print("phone-edit <name> <old_phone> <new_phone>: Edit a phone number of a contact")
-                print("phone-remove <name> <phone>: Remove a phone number from a contact")
+                print("add-phone <name> <phone>: Add a phone number to a contact")
+                print("edit-phone <name> <old_phone> <new_phone>: Edit a phone number of a contact")
+                print("remove-phone <name> <phone>: Remove a phone number from a contact")
                 print("phone <name>: Show the phone number of a contact")
                 print("all: Show all contacts")
                 print("close or exit: Close the assistant bot")
@@ -69,11 +69,11 @@ def main():
                 print(change_contact(args, book))
             case "remove":
                 print(remove_contact(args, book))
-            case "phone-add":
+            case "add-phone":
                 print(add_phone(args, book))
-            case "phone-edit":
+            case "edit-phone":
                 print(edit_phone(args, book))
-            case "phone-remove":
+            case "remove-phone":
                 print(remove_phone(args, book))
             case "phone":
                 print(show_phone(args, book))

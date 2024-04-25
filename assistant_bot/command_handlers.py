@@ -24,11 +24,13 @@ def add_contact(args, book: AddressBook):
     Raises:
     ValueError: If the number of arguments is not equal to 2.
     """
-    if len(args) != 2:
-        raise ValueError("Add command requires a name and a phone number.")
-    name, phone = args
+    if len(args) < 1 or len(args) > 2:
+        raise ValueError("Add command requires a name and a phone number optionally.")
+    name, *rest = args
+    phone = rest[0] if rest else None
     record = Record(name)
-    record.add_phone(phone)
+    if phone:
+        record.add_phone(phone)
     book.add_record(record)
     return "Contact added."
 
