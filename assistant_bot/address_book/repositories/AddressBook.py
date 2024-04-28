@@ -2,6 +2,7 @@
 An adress book class to manage contacts using Record model
 """
 
+import pickle
 from collections import UserDict
 from assistant_bot.address_book.models.Record import Record
 
@@ -18,6 +19,54 @@ class AddressBook(UserDict):
     edit_record -- updates the name of the record
     find_record -- returns the record if found
     """
+
+    storage = "./data/address_book.pickle"
+
+    def load(self):
+        """
+        Loads the address book from a file
+
+        Arguments:
+        None
+
+        Returns:
+        None
+
+        Raises:
+        FileNotFoundError -- if the file is not found
+        """
+        try:
+            with open(self.storage, "rb") as file:
+                try:
+                    retored = pickle.load(file)
+                except Exception as e:
+                    print(f"Error loading address book: {e}")
+                    return
+                self.data = retored.data
+
+        except FileNotFoundError:
+            print("Address book is empty, starting from scratch")
+
+    def dump(self):
+        """
+        Saves the address book to a file
+
+        Arguments:
+        None
+
+        Returns:
+        None
+
+        Raises:
+        None
+        """
+        with open(self.storage, "wb") as file:
+            try:
+                pickle.dump(self, file)
+            except Exception as e:
+                print(f"Error saving address book: {e}")
+            
+
     def add_record(self, record: Record):
         """
         Adds a record to the address book

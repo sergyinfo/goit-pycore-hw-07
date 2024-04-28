@@ -7,7 +7,7 @@ def run_bot():
     """
     Run the assistant bot.
     """
-    print("Starting the assistant bot v0.1...")
+    print("Starting the assistant bot v0.2...")
     main()
 
 if __name__ == "__main__":
